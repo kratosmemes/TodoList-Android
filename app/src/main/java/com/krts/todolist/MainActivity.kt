@@ -38,44 +38,4 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun TodoList() {
-    val todos = remember { mutableStateListOf<String>() }
-    val newTodoField = remember { mutableStateOf(TextFieldValue()) }
-
-    Column {
-        TextField(
-            value = newTodoField.value,
-            onValueChange = { newTodoField.value = it },
-            label = { Text("New Todo") }
-        )
-        Button(
-            onClick = {
-                todos.add(newTodoField.value.text)
-                newTodoField.value = TextFieldValue("")
-            }
-        ) {
-            Text("Add Todo")
-        }
-        LazyColumn {
-            items(todos.size) { todo ->
-                Row {
-                    Text(todo.toString())
-                    Button(
-                        onClick = { todos.remove(todo.toString()) }
-                    ) {
-                        Text("Remove")
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    TodoList()
-}
-
 

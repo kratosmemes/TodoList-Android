@@ -29,10 +29,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,7 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-data class ShoppingItem(
+data class TaskItem(
     val id:Int,
     var name: String,
     var isEditing: Boolean = false,
@@ -56,11 +53,18 @@ data class ShoppingItem(
 
 @Preview
 @Composable
-fun ToDoListApp(){
-    var sTasks = remember{ mutableStateListOf<ShoppingItem>() }
+fun ToDoListApp() {
+    var sTasks = remember { mutableStateListOf<TaskItem>() }
     var showDialog by remember { mutableStateOf(false) }
-    var itemName  by remember { mutableStateOf("")}
+    var itemName by remember { mutableStateOf("") }
 
+    Box() {
+        Button(onClick = {
+            sTasks.forEach { println("$it") }
+        }) {
+            Text(text = "Mostar")
+        }
+    }
     Column(
         modifier= Modifier.fillMaxWidth(),
         //verticalArrangement = Arrangement.Center
@@ -84,8 +88,8 @@ fun ToDoListApp(){
                 if(!item.isCompleted){
                     ShoppingListItem(item,
                         {
-                            sTasks.forEach{println("$it")}
-                            sTasks[item.id-1] = sTasks[item.id-1].copy(
+                            val ind = sTasks.indexOf(item)
+                            sTasks[ind] = sTasks[ind].copy(
                                 isCompleted = true
                             )
                         },
@@ -109,10 +113,9 @@ fun ToDoListApp(){
                 if(item.isCompleted){
                     ShoppingListItem(item,
                         {
-                            println(item.id)
-                            sTasks.forEach{println("$it")}
-                            sTasks[item.id-1] = sTasks[item.id-1].copy(
-                                isCompleted = true
+                            val ind = sTasks.indexOf(item)
+                            sTasks[ind] = sTasks[ind].copy(
+                                isCompleted = false
                             )
                         },
                         {
@@ -135,7 +138,7 @@ fun ToDoListApp(){
                 ){
                     Button(onClick = {
                         if(itemName.isNotBlank()){
-                            val newItem = ShoppingItem(
+                            val newItem = TaskItem(
                                 id= sTasks.size+1,
                                 name = itemName,
                             )
@@ -174,7 +177,7 @@ fun ToDoListApp(){
 
 @Composable
 fun ShoppingListItem(
-    item: ShoppingItem,
+    item: TaskItem,
     onCompleteClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ){

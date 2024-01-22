@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -43,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.round
 
 data class TaskItem(
     val id:Int,
@@ -58,118 +60,121 @@ fun ToDoListApp() {
     var showDialog by remember { mutableStateOf(false) }
     var itemName by remember { mutableStateOf("") }
 
-    Box() {
-        Button(onClick = {
-            sTasks.forEach { println("$it") }
-        }) {
-            Text(text = "Mostar")
-        }
-    }
     Column(
         modifier= Modifier.fillMaxWidth(),
         //verticalArrangement = Arrangement.Center
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Button(
-            onClick = { showDialog = true},
+            onClick = { showDialog = true },
             modifier = Modifier.padding(0.dp, 30.dp, 0.dp, 0.dp),
-        ){
-            Text("Add task")
+            shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp)
+        ) {
+            Text("Add task +")
         }
 
-        //Uncompleted tasks
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(text = "Uncompleted tasks")
-        LazyColumn(
-            modifier= Modifier
-                .padding(16.dp)
-        ){
-            items(sTasks){ item ->
-                if(!item.isCompleted){
-                    ShoppingListItem(item,
-                        {
-                            val ind = sTasks.indexOf(item)
-                            sTasks[ind] = sTasks[ind].copy(
-                                isCompleted = true
-                            )
-                        },
-                        {
-                            //Remove task from list lambda function
-                            sTasks.remove(item)
-                        }
-                    )
+        if(sTasks.size == 0) {
+                Text(
+                    modifier = Modifier.padding(0.dp, 30.dp, 0.dp, 0.dp),
+                    text = "You have not added any task yet."
+                )
+        } else {
+
+            //Uncompleted tasks
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(text = "Uncompleted tasks")
+            LazyColumn(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
+                items(sTasks) { item ->
+                    if (!item.isCompleted) {
+                        ShoppingListItem(item,
+                            {
+                                val ind = sTasks.indexOf(item)
+                                sTasks[ind] = sTasks[ind].copy(
+                                    isCompleted = true
+                                )
+                            },
+                            {
+                                //Remove task from list lambda function
+                                sTasks.remove(item)
+                            }
+                        )
+                    }
+                }
+            }
+
+            //Completed Tasks
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(text = "Completed tasks, ¡Keep going!")
+            LazyColumn(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
+                items(sTasks) { item ->
+                    if (item.isCompleted) {
+                        ShoppingListItem(item,
+                            {
+                                val ind = sTasks.indexOf(item)
+                                sTasks[ind] = sTasks[ind].copy(
+                                    isCompleted = false
+                                )
+                            },
+                            {
+                                //Remove task from list lambda function
+                                sTasks.remove(item)
+                            }
+                        )
+                    }
                 }
             }
         }
 
-        //Completed Tasks
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(text = "Completed tasks, ¡Keep going!")
-        LazyColumn(
-            modifier= Modifier
-            .padding(16.dp)
-        ){
-            items(sTasks){ item ->
-                if(item.isCompleted){
-                    ShoppingListItem(item,
-                        {
-                            val ind = sTasks.indexOf(item)
-                            sTasks[ind] = sTasks[ind].copy(
-                                isCompleted = false
-                            )
-                        },
-                        {
-                            //Remove task from list lambda function
-                            sTasks.remove(item)
-                        }
-                    )
-                }
-            }
-        }
-    }
-
-    if(showDialog){
-        AlertDialog(onDismissRequest = { showDialog=false },
-            confirmButton = {
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ){
-                    Button(onClick = {
-                        if(itemName.isNotBlank()){
-                            val newItem = TaskItem(
-                                id= sTasks.size+1,
-                                name = itemName,
-                            )
-                            sTasks.add(newItem)
-                            showDialog = false
-                            itemName = ""
-                        }
-                    }){
-                        Text("Add")
-                    }
-                    Button(onClick = {showDialog = false}){
-                        Text("Cancel")
-                    }
-                }
-
-            },
-            title = { Text("Add to do task")},
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = itemName,
-                        label = { Text("Task name") },
-                        onValueChange = { itemName = it },
-                        singleLine = true,
+        if (showDialog) {
+            AlertDialog(onDismissRequest = { showDialog = false },
+                confirmButton = {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
-                    )
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Button(onClick = {
+                            if (itemName.isNotBlank()) {
+                                val newItem = TaskItem(
+                                    id = sTasks.size + 1,
+                                    name = itemName,
+                                )
+                                sTasks.add(newItem)
+                                showDialog = false
+                                itemName = ""
+                            }
+                        }) {
+                            Text("Add")
+                        }
+                        Button(onClick = { showDialog = false }) {
+                            Text("Cancel")
+                        }
+                    }
+
+                },
+                title = { Text("Add to do task") },
+                text = {
+                    Column {
+                        OutlinedTextField(
+                            value = itemName,
+                            label = { Text("Task name") },
+                            onValueChange = { itemName = it },
+                            singleLine = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }
 

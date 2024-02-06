@@ -1,31 +1,25 @@
-package com.krts.todolist
+package com.krts.todolist.viewmodels
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -44,19 +38,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.round
-
-data class TaskItem(
-    val id:Int,
-    var name: String,
-    var isEditing: Boolean = false,
-    var isCompleted: Boolean = false,
-)
+import com.krts.todolist.models.TaskModel
 
 @Preview
 @Composable
 fun ToDoListApp() {
-    var sTasks = remember { mutableStateListOf<TaskItem>() }
+    val sTasks = remember { mutableStateListOf<TaskModel>() }
     var showDialog by remember { mutableStateOf(false) }
     var itemName by remember { mutableStateOf("") }
 
@@ -142,7 +129,7 @@ fun ToDoListApp() {
                     ) {
                         Button(onClick = {
                             if (itemName.isNotBlank()) {
-                                val newItem = TaskItem(
+                                val newItem = TaskModel(
                                     id = sTasks.size + 1,
                                     name = itemName,
                                 )
@@ -182,7 +169,7 @@ fun ToDoListApp() {
 
 @Composable
 fun ShoppingListItem(
-    item: TaskItem,
+    item: TaskModel,
     onCompleteClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ){

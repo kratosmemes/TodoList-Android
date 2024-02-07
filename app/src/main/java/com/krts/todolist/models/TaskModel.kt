@@ -1,4 +1,7 @@
-package com.krts.todolist.Models
+package com.krts.todolist.models
 
-class TaskModel {
-}
+data class TaskModel(
+    var id: Int,
+    var name: String,
+    var isCompleted: Boolean = false
+)
